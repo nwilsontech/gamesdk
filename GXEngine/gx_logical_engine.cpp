@@ -52,7 +52,7 @@ static void Update()
 }
 
 
-inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::string _cp1,std::string _tg1,double &working_stats,double &target)
+inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::string _cp1,std::string _hdr1,std::string _tg1,double &working_stats,double &target)
 {
     if (findGraphic(boxes,_bt1)!=nullptr)
     {
@@ -68,9 +68,9 @@ inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::strin
                  {
                      findLabelBox(boxes,_cp1)->Text = _tg1+" "+std::to_string((long long int)target);
                  }
-                 if (findLabelBox(boxes,"[HDR_CP]")!=nullptr)
+                 if (findLabelBox(boxes,_hdr1)!=nullptr)
                  {
-                     findLabelBox(boxes,"[HDR_CP]")->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+                     findLabelBox(boxes,_hdr1)->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
                  }
             }
         }
@@ -88,9 +88,9 @@ inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::strin
                 {
                     findLabelBox(boxes,_cp1)->Text = _tg1+" "+std::to_string((long long int)target);
                 }
-                if (findLabelBox(boxes,"[HDR_CP]")!=nullptr)
+                if (findLabelBox(boxes,_hdr1)!=nullptr)
                 {
-                    findLabelBox(boxes,"[HDR_CP]")->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+                    findLabelBox(boxes,_hdr1)->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
                 }
             }
         }
@@ -595,12 +595,12 @@ int RenderScene(void *data)
      *
      */
 
-    STAT_BTN_PLUS_AND_MINUS("[ATK_STAT_AD]","[ATK_STAT_MN]","[ATK_STAT_CP]","Attack",Champion.hero_stats.AvailableStat,Champion.hero_stats.Attack);
-    STAT_BTN_PLUS_AND_MINUS("[DEF_STAT_AD]","[DEF_STAT_MN]","[DEF_STAT_CP]","Defense",Champion.hero_stats.AvailableStat,Champion.hero_stats.Defense);
-    STAT_BTN_PLUS_AND_MINUS("[HLT_STAT_AD]","[HLT_STAT_MN]","[HLT_STAT_CP]","Health",Champion.hero_stats.AvailableStat,Champion.hero_stats.Health);
-    STAT_BTN_PLUS_AND_MINUS("[ENG_STAT_AD]","[ENG_STAT_MN]","[ENG_STAT_CP]","Energy",Champion.hero_stats.AvailableStat,Champion.hero_stats.Energy);
-    STAT_BTN_PLUS_AND_MINUS("[STM_STAT_AD]","[STM_STAT_MN]","[STM_STAT_CP]","Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina);
-    STAT_BTN_PLUS_AND_MINUS("[PER_STAT_AD]","[PER_STAT_MN]","[PER_STAT_CP]","Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception);
+    STAT_BTN_PLUS_AND_MINUS("[ATK_STAT_AD]","[ATK_STAT_MN]","[ATK_STAT_CP]","[HDR_CP]","Attack",Champion.hero_stats.AvailableStat,Champion.hero_stats.Attack);
+    STAT_BTN_PLUS_AND_MINUS("[DEF_STAT_AD]","[DEF_STAT_MN]","[DEF_STAT_CP]","[HDR_CP]","Defense",Champion.hero_stats.AvailableStat,Champion.hero_stats.Defense);
+    STAT_BTN_PLUS_AND_MINUS("[HLT_STAT_AD]","[HLT_STAT_MN]","[HLT_STAT_CP]","[HDR_CP]","Health",Champion.hero_stats.AvailableStat,Champion.hero_stats.Health);
+    STAT_BTN_PLUS_AND_MINUS("[ENG_STAT_AD]","[ENG_STAT_MN]","[ENG_STAT_CP]","[HDR_CP]","Energy",Champion.hero_stats.AvailableStat,Champion.hero_stats.Energy);
+    STAT_BTN_PLUS_AND_MINUS("[STM_STAT_AD]","[STM_STAT_MN]","[STM_STAT_CP]","[HDR_CP]","Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina);
+    STAT_BTN_PLUS_AND_MINUS("[PER_STAT_AD]","[PER_STAT_MN]","[PER_STAT_CP]","[HDR_CP]","Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception);
 
 
 
