@@ -29,6 +29,8 @@ class GX_Engine
 private: /// CTOR & DTOR
     GX_Engine();
     virtual ~GX_Engine();
+public:
+    static std::map<GX_ENGINE_MODE, size_t> layer_bindings;
 private:
     GX_ENGINE_MODE md;
 public:
@@ -44,6 +46,9 @@ public:
     /// Layer Functions
     bool LayerDisabled(size_t l);
     void ToggleLayer(size_t l);
+    void UpdateLayers();
+    ///
+    void AssocLayerMapping(GX_ENGINE_MODE m,size_t v);
     /// Game Mode Functions
     void SetMode(GX_ENGINE_MODE mode);
     GX_ENGINE_MODE GetMode();
@@ -58,6 +63,7 @@ public:
     vector< vector<TPrimative *> > layers;
     vector<bool> elayers;
     vector<std::string> layers_alias;
+
 };
 
 

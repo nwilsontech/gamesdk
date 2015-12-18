@@ -2,6 +2,17 @@
 #include <functional>
 using namespace std::placeholders;
 
+std::map<GX_ENGINE_MODE, size_t> GX_Engine::layer_bindings= {
+    {EQUIP_MODE,0},
+    {STATS_MODE,0},
+    {SHOPS_MODE,0},
+    {BATTL_MODE,0},
+    {QUEST_MODE,0},
+    {LEGIN_MODE,0},
+    {ENCHT_MODE,0},
+    {NAVIG_MODE,0}
+};
+
 GX_Engine::GX_Engine()
 {
 
@@ -50,6 +61,16 @@ bool GX_Engine::LayerDisabled(size_t l)
 void GX_Engine::ToggleLayer(size_t l)
 {
     elayers[l] = !elayers[l];
+}
+
+void GX_Engine::UpdateLayers()
+{
+
+}
+
+void GX_Engine::AssocLayerMapping(GX_ENGINE_MODE m,size_t v)
+{
+    layer_bindings[m] = v;
 }
 
 void GX_Engine::SetMode(GX_ENGINE_MODE mode)

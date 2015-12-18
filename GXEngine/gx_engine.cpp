@@ -104,44 +104,7 @@ void GX_Engine::FinEngine(void)
 
 
 
-/*
-//void switchHelm(void *n,int l)
-//{
-//    (void)n; (void)l;
-//    static int count = 0;
-//    static TGraphic *working = findGraphic(boxes,"helm");
-//    static string helm1 = "bars/equip/helm_glorious_dawn.png";
-//    static string helm2 = "bars/equip/helm_runemaster.png";
-//    if (working==nullptr)
-//    {
-//        fprintf(stderr,"_event_[SWITCH_HELM] working = nullptr\n");
-//        //working = findGraphic(boxes,"helm");
-//        return;
-//    }
-//    if (count==0)
-//    {
-//        working->tex = new GXTexture(helm2);
-//    }else if (count==1)
-//    {
-//        working->tex = new GXTexture(helm1);
-//    }
-//    count = (count+1)%2;
 
-//}
-
-//void testFunc(void *n,int l)
-//{
-//    (void)n; (void)l;
-//    static TGraphic *working = findGraphic(boxes,"helm");
-//    if (working==nullptr)
-//    {
-//        // nada
-//    }else
-//    {
-//        working->visible ^= true;
-//    }
-//}
-*/
 void ToggleMenu(void *n,int l)
 {
     //
@@ -201,9 +164,9 @@ void LoadEquipment(void)
 }
 
 std::vector<std::string> game_arc = {
-    "Scenes/armor/armor.xml",
-//    "Scenes/battle/load.xml",
-    "Scenes/stats/stats.xml",
+    "Scenes/armor/armor.xml", //1
+    "Scenes/battle/load.xml", //2
+    "Scenes/stats/stats.xml", //3
     "Scenes/base/base.rxl"
 };
 
@@ -309,6 +272,15 @@ void GX_Engine::RunEngine(void)
         DBG_msg("Failed to load assets!");
     }else
         loaded = true;
+
+
+    AssocLayerMapping(EQUIP_MODE,1);
+    AssocLayerMapping(BATTL_MODE,2);
+    AssocLayerMapping(STATS_MODE,3);
+    elayers[1] = false; // Gear
+    elayers[2] = true;
+    elayers[3] = true;
+
 //    bool ld = LoadPrimativesXT("Scenes/armor/armor.xml",boxes);
 //    ld |=  LoadPrimativesXT("Scenes/base/base.rxl",boxes);
 //    loaded = ld;

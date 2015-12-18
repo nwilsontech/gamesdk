@@ -51,6 +51,62 @@ static void Update()
 //global_font.PrintText(10,10,1,"ooooooooooooo");
 }
 
+inline void EXIT_BTN_STAT(std::string _btn)
+{
+    if (findGraphic(boxes,_btn)!=nullptr)
+    {
+       if (findGraphic(boxes,_btn)->status)
+       {
+           std::cout<<__PRETTY_FUNCTION__<<"\n";
+           WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = true;
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
+           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+       }
+    }
+
+}
+inline void ENTR_BTN_STAT(std::string _btn)
+{
+    if (findGraphic(boxes,_btn)!=nullptr)
+    {
+       if (findGraphic(boxes,_btn)->status)
+       {
+           std::cout<<__PRETTY_FUNCTION__<<"\n";
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
+           WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = false;
+           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+       }
+    }
+
+}
+inline void ENTR_BTN_BATTLE(std::string _btn)
+{
+    if (findGraphic(boxes,_btn)!=nullptr)
+    {
+       if (findGraphic(boxes,_btn)->status)
+       {
+           std::cout<<__PRETTY_FUNCTION__<<"\n";
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
+           WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]] = false;
+           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+       }
+    }
+
+}
+inline void EXIT_BTN_BATTLE(std::string _btn)
+{
+    if (findGraphic(boxes,_btn)!=nullptr)
+    {
+       if (findGraphic(boxes,_btn)->status)
+       {
+           std::cout<<__PRETTY_FUNCTION__<<"\n";
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
+           WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]] = true;
+           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+       }
+    }
+
+}
 
 inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::string _cp1,std::string _hdr1,std::string _tg1,double &working_stats,double &target)
 {
@@ -595,6 +651,7 @@ int RenderScene(void *data)
      *
      */
 
+
     STAT_BTN_PLUS_AND_MINUS("[ATK_STAT_AD]","[ATK_STAT_MN]","[ATK_STAT_CP]","[HDR_CP]","Attack",Champion.hero_stats.AvailableStat,Champion.hero_stats.Attack);
     STAT_BTN_PLUS_AND_MINUS("[DEF_STAT_AD]","[DEF_STAT_MN]","[DEF_STAT_CP]","[HDR_CP]","Defense",Champion.hero_stats.AvailableStat,Champion.hero_stats.Defense);
     STAT_BTN_PLUS_AND_MINUS("[HLT_STAT_AD]","[HLT_STAT_MN]","[HLT_STAT_CP]","[HDR_CP]","Health",Champion.hero_stats.AvailableStat,Champion.hero_stats.Health);
@@ -602,7 +659,10 @@ int RenderScene(void *data)
     STAT_BTN_PLUS_AND_MINUS("[STM_STAT_AD]","[STM_STAT_MN]","[STM_STAT_CP]","[HDR_CP]","Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina);
     STAT_BTN_PLUS_AND_MINUS("[PER_STAT_AD]","[PER_STAT_MN]","[PER_STAT_CP]","[HDR_CP]","Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception);
 
-
+    EXIT_BTN_STAT("[STAT_EXIT_BTN]");
+    ENTR_BTN_STAT("[STAT_ENTER]");
+    EXIT_BTN_BATTLE("[EXIT_RAID]");
+    ENTR_BTN_BATTLE("[RAID_ENTER]");
 
     /*
      *
