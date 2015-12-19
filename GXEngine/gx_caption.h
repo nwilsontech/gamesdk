@@ -31,6 +31,13 @@ using TLabel = GXCaption;
 
 #include "gx_rect.h"
 
+enum LBL_BOX_ALIGN
+{
+    GX_LB_ALIGN_LEFT,
+    GX_LB_ALIGN_CENTER,
+    GX_LB_ALIGN_RIGHT
+};
+
 class GXLabelBox:public TPrimative
 {
 public:
@@ -41,6 +48,8 @@ public:
     void FontColor(TColorFloat c);
     void FontColor(unsigned int c);
     void SetSize(size_t size);
+public:
+    void SetAlignment(LBL_BOX_ALIGN a);
 
 public:
     string Text;
@@ -48,7 +57,7 @@ public:
     TColorFloat Color;
     size_t fs;
 private:
-
+    LBL_BOX_ALIGN _alg;
 };
 using TLabelEX = GXLabelBox;
 

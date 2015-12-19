@@ -280,7 +280,7 @@ void GX_Engine::RunEngine(void)
     elayers[1] = false; // Gear
     elayers[2] = true;
     elayers[3] = true;
-
+    gtx::format_str_hulk("1");
 
 //    bool ld = LoadPrimativesXT("Scenes/armor/armor.xml",boxes);
 //    ld |=  LoadPrimativesXT("Scenes/base/base.rxl",boxes);

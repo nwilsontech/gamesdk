@@ -196,4 +196,23 @@ namespace std {
         }
         return ret;
     }
+
+}
+namespace gtx {
+    std::string format_str_hulk(std::string s)
+    {
+        if (s=="")
+            return "";
+        std::string ret = s;
+        std::string char_list = "kmbtqqqqq";
+        int size = (int)ret.size();
+        int mag  = (size-1) / 3;
+        ret = s.substr(0,((size-1) % 3)+1);
+        if (mag>0){
+            ret = ret + "." + s.substr(((size-1) % 3)+1,2);
+            ret = ret + char_list.substr(mag-1,1);
+        }
+        //std::cout<<s<<"\t"<<(size-1)/3<<"\n";
+        return ret;
+    }
 }

@@ -83,6 +83,7 @@ GXLabelBox::GXLabelBox(float _x,float _y,float _w,float _h,string text):TPrimati
     Text = text;
     Color = TColorFloat(1.0f,1.0f,1.0f,1.0f);
     fs   = 20;
+    _alg = GX_LB_ALIGN_CENTER;
 }
 GXLabelBox::~GXLabelBox()
 {
@@ -96,7 +97,12 @@ void GXLabelBox::Draw(void)
     //FontDraw((char *)Text.c_str(),x+_ox,y+_oy);
     WorldEngine->FontManager.PushSize(1);
     WorldEngine->FontManager.SetSize(1,fs);
-    WorldEngine->FontManager.PrintTextCenter(x+_ox+w/2,y+_oy+h/2,1,Text.c_str());
+    if (_alg==GX_LB_ALIGN_CENTER)
+        WorldEngine->FontManager.PrintTextCenter(x+_ox+w/2,y+_oy+h/2,1,Text.c_str());
+    if (_alg==GX_LB_ALIGN_LEFT)
+        WorldEngine->FontManager.PrintText(x+_ox,y+_oy+h/2,1,Text.c_str());
+    if (_alg==GX_LB_ALIGN_RIGHT)
+        WorldEngine->FontManager.PrintTextRight(x+w+_ox,y+h+_oy,1,Text.c_str());
     WorldEngine->FontManager.PopSize(1);
     glColor4f(1.0,1.0,1.0,1.0);
 }
@@ -140,4 +146,9 @@ void GXLabelBox::SetSize(size_t size)
 {
     fs = size;
 }
+void GXLabelBox::SetAlignment(LBL_BOX_ALIGN a)
+{
+    _alg = a;
+}
+
 ///////////

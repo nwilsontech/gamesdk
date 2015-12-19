@@ -446,7 +446,9 @@ public:
 namespace std {
     std::string format_str_w(std::string s = "",std::string notation = ",");
 }
-
+namespace gtx {
+    std::string format_str_hulk(std::string s);
+}
 
 #undef LSIZE
 #undef CLEAN

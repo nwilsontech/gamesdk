@@ -184,6 +184,34 @@ public:
 
         fonts[f]->Render(text);
     }
+    void PrintTextRight(int x, int y,int f,const char *fmt,...)
+    {
+        char    text[256];
+        va_list ap;
+        va_start(ap,fmt);
+        vsprintf(text,fmt,ap);
+        va_end(ap);
+
+        int wd = GetTextWidth(f,text);
+
+        glRasterPos2f(x-wd,y);
+
+        fonts[f]->Render(text);
+    }
+    void PrintTextRight(int x, int y, int f, TFormatedStringList &fs)
+    {
+        int tWidth = GetTextWidth(f,fs.GetLS().c_str());
+        int offSet = 0;
+        for(size_t i = 0; i < fs.formatedStrings.size(); i++)
+        {
+            glRasterPos2f(x-tWidth+offSet,y);
+            glColor3f(fs.formatedStrings.at(i).color.r,fs.formatedStrings.at(i).color.g,fs.formatedStrings.at(i).color.b);
+            PrintText(x-tWidth+offSet,y,f,fs.formatedStrings.at(i).str.c_str());
+            //fonts[f]->Render(fs.formatedStrings.at(i).str.c_str());
+            glColor3f(1.0f,1.0f,1.0f);
+            offSet+=GetTextWidth(f,fs.formatedStrings.at(i).str.c_str());
+        }
+    }
     void PrintTextCenter(int x, int y, int f, TFormatedStringList &fs)
     {
         int tWidth = GetTextWidth(f,fs.GetLS().c_str());

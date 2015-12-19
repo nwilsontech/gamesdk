@@ -52,6 +52,7 @@ public:
     /// Game Mode Functions
     void SetMode(GX_ENGINE_MODE mode);
     GX_ENGINE_MODE GetMode();
+
 public:
 //    void &PrintText(int x, int y,int f,const char *fmt,...);
     void *Print;

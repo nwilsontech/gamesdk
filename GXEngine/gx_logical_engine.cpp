@@ -90,6 +90,7 @@ inline void ENTR_BTN_STAT(std::string _btn)
        if (findGraphic(boxes,_btn)->status)
        {
            std::cout<<__PRETTY_FUNCTION__<<"\n";
+           findLabelBox(boxes,"[HDR_CP]")->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
            WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = false;
            findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
@@ -217,9 +218,9 @@ int RenderScene(void *data)
 
     Champion.hero_stats.Attack  = 130000;
     Champion.hero_stats.Defense = 60000;
-    Champion.hero_stats.Honor   = 10000;
-    Champion.hero_stats.Energy  = 10000;
-    Champion.hero_stats.Stamina = 10000;
+//    Champion.hero_stats.Honor   = 10000;
+//    Champion.hero_stats.Energy  = 10000;
+//    Champion.hero_stats.Stamina = 10000;
     auto AddToConPrev = [&console_prev,&prev_item](TFormatedStringList s)->void
     {
 
@@ -291,6 +292,7 @@ int RenderScene(void *data)
                 findHealthBarEx(boxes,"sbar")->ResetAndMax(Champion.hero_stats.Stamina);
                 findHealthBarEx(boxes,"ebar")->ResetAndMax(Champion.hero_stats.Energy);
                 findHealthBarEx(boxes,"hbar")->ResetAndMax(Champion.hero_stats.Honor);
+                Champion.hero_stats.AvailableStat += 7;
 
             }
             findHealthBarEx(boxes,"xbar")->SetValue(Champion.hero_stats.Experience);
@@ -305,10 +307,12 @@ int RenderScene(void *data)
     {
         SDL_Delay( 100 );
     }
+
     float hue = 250.0f;
     float sat = 1.0f;
-    findLabelBox(boxes,"gold_cap")->SetSize(10);
-    findLabelBox(boxes,"gold_cap")->Text = "100000";
+    findLabelBox(boxes,"gold_cap")->SetSize((size_t)(20*0.8));
+    findLabelBox(boxes,"gold_cap")->Text = "0";
+    findLabelBox(boxes,"gold_cap")->SetAlignment(GX_LB_ALIGN_LEFT);
     findHealthBarEx(boxes,"hbar")->ResetAndMax(Champion.hero_stats.Honor);
     findHealthBarEx(boxes,"sbar")->ResetAndMax(Champion.hero_stats.Stamina);
     findHealthBarEx(boxes,"ebar")->ResetAndMax(Champion.hero_stats.Energy);
@@ -688,6 +692,7 @@ int RenderScene(void *data)
 
     if (keys!=nullptr){
 
+
     if (keys[SDL_SCANCODE_RETURN]&&!KYS[SDL_SCANCODE_RETURN])
     {
 
@@ -764,12 +769,13 @@ int RenderScene(void *data)
     }
 
     WorldEngine->FontManager.PushSize(1);
-    WorldEngine->FontManager.SetSize(1,12);
+    WorldEngine->FontManager.SetSize(1,15);
     WorldEngine->FontManager.PrintTextCenter(30,60,1,std::to_string((long long int)Champion.hero_stats.Level).c_str());
     WorldEngine->FontManager.PopSize(1);
 
-    std::string p_gold = "Gold:" +std::to_string((long long int)Champion.hero_stats.Money);
-    WorldEngine->FontManager.PrintText(window_w-200,20,1,p_gold.c_str());
+    std::string p_gold = std::to_string((long long int)Champion.hero_stats.Money);
+    findLabelBox(boxes,"gold_cap")->Text = gtx::format_str_hulk(p_gold);
+    //WorldEngine->FontManager.PrintText(window_w-200,20,1,p_gold.c_str());
 
 
 
