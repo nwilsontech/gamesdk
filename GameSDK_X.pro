@@ -3,10 +3,6 @@ CONFIG += console c++14
 CONFIG -= app_bundle
 QT     += xml
 
-
-
-OBJECTS_DIR += $$PWD/.obj
-
 INCLUDEPATH += -I/usr/include/freetype2
 INCLUDEPATH += -L/usr/lib/
 INCLUDEPATH += $$PWD/

@@ -3,6 +3,7 @@
 #define GX_FONT_MANAGER
 
 #include <FTGL/ftgl.h>
+
 #include "gx_color.h"
 
 /**
@@ -113,15 +114,28 @@ public:
         fonts[0]->FaceSize(30);
 
         store_size[0] = 0;
-        fonts[1] = new FTPixmapFont("DejaVuSerif.ttf");
-        if (fonts[1]->Error())
+        fonts[2] = new FTPixmapFont("DejaVuSerif.ttf");
+        if (fonts[2]->Error())
         {
             printf("shit font 2\n");
         }
 
-        fonts[1]->FaceSize(17);
+        fonts[2]->FaceSize(17);
+        store_size[2] = 0;
+///home/nefin/Pictures/Qt Projects/build-GameSDK_X-Desktop_Qt_5_5_0_GCC_32bit-Debug/font/KnightsQuest.ttf
+        //UniversLTStd.otf
+        fonts[1] = new FTPixmapFont("font/UniversLTStd.otf");
+        if (fonts[1]->Error())
+        {
+            std::cout <<  fonts[1]->Error() << "\n";
+            printf("shit font 3\n");
+        }
 
+        fonts[1]->FaceSize(17);
         store_size[1] = 0;
+
+
+
 
     }
     /// Currently only allowing 1 depth stack for each font
@@ -210,13 +224,10 @@ public:
         return (int)fonts[f]->BBox(text).Upper().Xf();
     }
 
-   // static void Uninitialize(void);
-  //  static GLEngine *getEngine(void);
-  //  void Initialize(GLint width, GLint height);
 public:
-   FTFont* fonts[2];
+   FTFont* fonts[3];
 private: /// Make this data hidden
-   size_t  store_size[2];
+   size_t  store_size[3];
    //FTPixmapFont* infoFont;
 
 };

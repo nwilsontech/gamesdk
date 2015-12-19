@@ -37,6 +37,13 @@ extern GXEmitter Emitter;
 
 extern vector<GXSprite *> CheckList;
 
+long long int enemy_health = 100000000000;
+long long int enemy_hlt_mx = 100000000000;
+long long int phase_1 = enemy_health / 4;
+long long int phase_2 = phase_1 * 2;
+long long int phase_3 = phase_1 * 3;
+
+
 void setOrtho(int width, int height,int s__x,int s__y)
 {
        glViewport(s__x,s__y,width,height);
@@ -49,6 +56,17 @@ void setOrtho(int width, int height,int s__x,int s__y)
 static void Update()
 {
 //global_font.PrintText(10,10,1,"ooooooooooooo");
+}
+
+inline void InitateRaid()
+{
+    findGraphic(boxes,"boss1")->visible = true;
+    findGraphic(boxes,"boss2")->visible = false;
+    findGraphic(boxes,"boss3")->visible = false;
+    findGraphic(boxes,"boss4")->visible = false;
+    findHealthBarEx(boxes,"health_bar")->max_value  = enemy_hlt_mx;
+    findHealthBarEx(boxes,"health_bar")->cur_value  = enemy_health;
+    findHealthBarEx(boxes,"health_bar")->show_value = true;
 }
 
 inline void EXIT_BTN_STAT(std::string _btn)
@@ -89,6 +107,7 @@ inline void ENTR_BTN_BATTLE(std::string _btn)
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
            WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]] = false;
            findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+           InitateRaid();
        }
     }
 
@@ -171,10 +190,7 @@ std::string get_usage_state(int us)
     return "";
 }
 
-long long int enemy_health = 100000000000;
-long long int phase_1 = enemy_health / 4;
-long long int phase_2 = phase_1 * 2;
-long long int phase_3 = phase_1 * 3;
+
 bool auto_engage = false;
 std::string auto_target = "";
 int auto_status = 0;
@@ -256,7 +272,7 @@ int RenderScene(void *data)
             fsl.Push(TFormatedString(1,"white"," dealt"));//" dealt  "
             fsl.Push(TFormatedString(1,"greenyellow"," "+format_str_w(std::to_string(res))+" dmg"));
 
-            long long int xp_gained = u+rollD(u);
+            long long int xp_gained = u+rollD(u+(u==20)*60);
             long long int gd_gained = u*100;
             fsl.Push(TFormatedString(1,"white","! Lost 99 health. Gained"));
             fsl.Push(TFormatedString(1,"gold"," "+format_str_w(std::to_string(gd_gained))+" gold "));
@@ -291,16 +307,8 @@ int RenderScene(void *data)
     }
     float hue = 250.0f;
     float sat = 1.0f;
-    if(in_raid){
-    findGraphic(boxes,"boss1")->visible = true;
-    findGraphic(boxes,"boss2")->visible = false;
-    findGraphic(boxes,"boss3")->visible = false;
-    findGraphic(boxes,"boss4")->visible = false;
-    findHealthBarEx(boxes,"health_bar")->max_value  = enemy_health;
-    findHealthBarEx(boxes,"health_bar")->cur_value  = enemy_health;
-    findHealthBarEx(boxes,"health_bar")->show_value = true;
-    }
-    //Champion.hero_stats.
+    findLabelBox(boxes,"gold_cap")->SetSize(10);
+    findLabelBox(boxes,"gold_cap")->Text = "100000";
     findHealthBarEx(boxes,"hbar")->ResetAndMax(Champion.hero_stats.Honor);
     findHealthBarEx(boxes,"sbar")->ResetAndMax(Champion.hero_stats.Stamina);
     findHealthBarEx(boxes,"ebar")->ResetAndMax(Champion.hero_stats.Energy);
@@ -423,7 +431,9 @@ int RenderScene(void *data)
         }
 
         /// Render Console Output
-        DrawConPrev();
+        if (!WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]]) {
+            DrawConPrev();
+        }
     }
     else
     {
@@ -432,7 +442,7 @@ int RenderScene(void *data)
 
 
 
-    if (in_raid) {
+    if (!WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]]) {
 /// Update Stuff
 ///   added delta check
     if (enemy_health<phase_3){

@@ -281,6 +281,7 @@ void GX_Engine::RunEngine(void)
     elayers[2] = true;
     elayers[3] = true;
 
+
 //    bool ld = LoadPrimativesXT("Scenes/armor/armor.xml",boxes);
 //    ld |=  LoadPrimativesXT("Scenes/base/base.rxl",boxes);
 //    loaded = ld;
@@ -324,31 +325,6 @@ void GX_Engine::RunEngine(void)
 //    grp->SetOnclickFunc(switchHelm);
 
 //    menu->AddMenuItem(grp);
-
-//    findGraphic(boxes,"[HELM_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[MAIN_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[OFFH_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[CHES_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[PANT_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[GLOV_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[BOOT_SLOT]")->SetOnclickFunc(ToggleMenu);
-//    findGraphic(boxes,"[RING_SLOT]")->SetOnclickFunc(ToggleMenu);
-
-//    //grap->SetOnclickFunc(testFunc);
-
-//    menu->SetAndUseBackgroundImage("bars/menu_back.png",window_w,window_h-100);
-    /// Add Menu to display list;
-
-//    boxes.push_back(menu);
-
-
-//    if (loaded==true)
-//    {
-//        std::cout<<"Loaded Primatives\n";
-//    }
-
-
-
 
     while (!done)
     {
