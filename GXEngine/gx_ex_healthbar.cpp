@@ -126,6 +126,13 @@ void THealthBarEx::SetMax(double M)
 {
     max_value = M;
 }
+void THealthBarEx::AdjValMax(double v, double m)
+{
+    SetMax(m);
+    SetValue(v);
+
+}
+
 void THealthBarEx::ResetAndMax(double M)
 {
     SetMax(M);

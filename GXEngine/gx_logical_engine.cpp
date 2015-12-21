@@ -43,6 +43,7 @@ long long int phase_1 = enemy_health / 4;
 long long int phase_2 = phase_1 * 2;
 long long int phase_3 = phase_1 * 3;
 
+double pendingStats = 0;
 
 void setOrtho(int width, int height,int s__x,int s__y)
 {
@@ -58,119 +59,121 @@ static void Update()
 //global_font.PrintText(10,10,1,"ooooooooooooo");
 }
 
-inline void InitateRaid()
+inline void InitateRaid(THealthBarEx *h,TGraphic *b0,TGraphic *b1,TGraphic *b2,TGraphic *b3)
 {
-    findGraphic(boxes,"boss1")->visible = true;
-    findGraphic(boxes,"boss2")->visible = false;
-    findGraphic(boxes,"boss3")->visible = false;
-    findGraphic(boxes,"boss4")->visible = false;
-    findHealthBarEx(boxes,"health_bar")->max_value  = enemy_hlt_mx;
-    findHealthBarEx(boxes,"health_bar")->cur_value  = enemy_health;
-    findHealthBarEx(boxes,"health_bar")->show_value = true;
+    b0->visible = true;
+    b1->visible = false;
+    b2->visible = false;
+    b3->visible = false;
+    h->max_value  = enemy_hlt_mx;
+    h->cur_value  = enemy_health;
+    h->show_value = true;
 }
 
-inline void EXIT_BTN_STAT(std::string _btn)
+inline void EXIT_BTN_STAT(TGraphic *_btn)
 {
-    if (findGraphic(boxes,_btn)!=nullptr)
-    {
-       if (findGraphic(boxes,_btn)->status)
+       if (_btn->status)
        {
            std::cout<<__PRETTY_FUNCTION__<<"\n";
            WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = true;
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
-           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+           Champion.hero_stats.EmptyPending();
+           _btn->status = !_btn->status;
        }
-    }
-
 }
-inline void ENTR_BTN_STAT(std::string _btn)
+
+inline void CONF_BTN_STAT(TGraphic *_btn)
 {
-    if (findGraphic(boxes,_btn)!=nullptr)
-    {
-       if (findGraphic(boxes,_btn)->status)
+
+       if (_btn->status)
        {
            std::cout<<__PRETTY_FUNCTION__<<"\n";
-           findLabelBox(boxes,"[HDR_CP]")->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
-           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
-           WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = false;
-           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+           WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = true;
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
+           _btn->status = !_btn->status;
        }
-    }
 
 }
-inline void ENTR_BTN_BATTLE(std::string _btn)
+
+inline void ENTR_BTN_STAT(TGraphic *_btn, TLabelEX *cpt)
 {
-    if (findGraphic(boxes,_btn)!=nullptr)
-    {
-       if (findGraphic(boxes,_btn)->status)
+
+       if (_btn->status)
+       {
+           std::cout<<__PRETTY_FUNCTION__<<"\n";
+           cpt->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+           WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
+           WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = false;
+           _btn->status = !_btn->status;
+       }
+
+}
+inline void ENTR_BTN_BATTLE(TGraphic *_btn,THealthBarEx *h,TGraphic *b0,TGraphic *b1,TGraphic *b2,TGraphic *b3)
+{
+
+       if (_btn->status)
        {
            std::cout<<__PRETTY_FUNCTION__<<"\n";
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = true;
            WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]] = false;
-           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
-           InitateRaid();
+           _btn->status = !_btn->status;
+           InitateRaid(h,b0,b1,b2,b3);
        }
-    }
 
 }
-inline void EXIT_BTN_BATTLE(std::string _btn)
+inline void EXIT_BTN_BATTLE(TGraphic *_btn)
 {
-    if (findGraphic(boxes,_btn)!=nullptr)
-    {
-       if (findGraphic(boxes,_btn)->status)
+       if (_btn->status)
        {
            std::cout<<__PRETTY_FUNCTION__<<"\n";
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
            WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]] = true;
-           findGraphic(boxes,_btn)->status = !findGraphic(boxes,_btn)->status;
+           _btn->status = !_btn->status;
        }
-    }
 
 }
 
-inline void STAT_BTN_PLUS_AND_MINUS(std::string _bt1,std::string _bt2,std::string _cp1,std::string _hdr1,std::string _tg1,double &working_stats,double &target)
-{
-    if (findGraphic(boxes,_bt1)!=nullptr)
-    {
-        auto *button =  findGraphic(boxes,_bt1);
+inline void UpdateStats(){
 
-        if (button->status)
+    findHealthBarEx(boxes,"hbar")->AdjValMax(Champion.hero_stats.Honor, Champion.hero_stats.HonorMax);
+    findHealthBarEx(boxes,"sbar")->AdjValMax(Champion.hero_stats.Stamina, Champion.hero_stats.StaminaMax);
+    findHealthBarEx(boxes,"ebar")->AdjValMax(Champion.hero_stats.Energy, Champion.hero_stats.EnergyMax);
+    findHealthBarEx(boxes,"hpbar")->AdjValMax(Champion.hero_stats.Health, Champion.hero_stats.HealthMax);
+}
+
+
+inline void STAT_BTN_PLUS_AND_MINUS(TGraphic *_bt1,TGraphic *_bt2,TLabelEX *_cp1,TLabelEX *_hdr1,std::string _tg1,double &working_stats,double &target,double &pending, double mod_gain=1.0, double mod_take=1.0)
+{
+
+        if (_bt1->status)
         {
-            //std::cout<<"Clicked\n";
+
             if (working_stats>0){
-                working_stats--;
-                target++;
-                 if (findLabelBox(boxes,_cp1)!=nullptr)
-                 {
-                     findLabelBox(boxes,_cp1)->Text = _tg1+" "+std::to_string((long long int)target);
-                 }
-                 if (findLabelBox(boxes,_hdr1)!=nullptr)
-                 {
-                     findLabelBox(boxes,_hdr1)->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
-                 }
+                working_stats-=1*mod_take;
+                pending+=1*mod_gain;
+                 std::string tp =  _tg1+" "+std::to_string((long long int)target);
+                 if (pending>0.0)
+                     tp+=" + ("+std::to_string((long long int)pending)+")";
+                 _cp1->Text = tp;
+                 _hdr1->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+
             }
         }
-    }
-    if (findGraphic(boxes,_bt2)!=nullptr)
-    {
-        auto *button =  findGraphic(boxes,_bt2);
-        if (button->status)
+
+        if (_bt2->status)
         {
-           // std::cout<<"Clicked\n";
+
             if (target>0){
-                working_stats++;
-                target--;
-                if (findLabelBox(boxes,_cp1)!=nullptr)
-                {
-                    findLabelBox(boxes,_cp1)->Text = _tg1+" "+std::to_string((long long int)target);
-                }
-                if (findLabelBox(boxes,_hdr1)!=nullptr)
-                {
-                    findLabelBox(boxes,_hdr1)->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
-                }
+                working_stats+=1*mod_take;
+                pending-=1*mod_gain;
+                    std::string tp =  _tg1+" "+std::to_string((long long int)target);
+                    if (pending>0.0)
+                        tp+=" + ("+std::to_string((long long int)pending)+")";
+                _cp1->Text = tp;
+                _hdr1->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+
             }
         }
-    }
 }
 
 std::string get_usage_state(int us)
@@ -206,9 +209,6 @@ int RenderScene(void *data)
 
     int usage_state = 0;
 
-    /// Initalize local
-    std::string blinkingCursor = "|";
-    //vector<string> console_prev;
     vector<TFormatedStringList> console_prev;
     static bool KYS[400] = {false,};
     //console_prev.push_back("");
@@ -218,9 +218,7 @@ int RenderScene(void *data)
 
     Champion.hero_stats.Attack  = 130000;
     Champion.hero_stats.Defense = 60000;
-//    Champion.hero_stats.Honor   = 10000;
-//    Champion.hero_stats.Energy  = 10000;
-//    Champion.hero_stats.Stamina = 10000;
+
     auto AddToConPrev = [&console_prev,&prev_item](TFormatedStringList s)->void
     {
 
@@ -310,40 +308,101 @@ int RenderScene(void *data)
 
     float hue = 250.0f;
     float sat = 1.0f;
-    findLabelBox(boxes,"gold_cap")->SetSize((size_t)(20*0.8));
-    findLabelBox(boxes,"gold_cap")->Text = "0";
-    findLabelBox(boxes,"gold_cap")->SetAlignment(GX_LB_ALIGN_LEFT);
-    findHealthBarEx(boxes,"hbar")->ResetAndMax(Champion.hero_stats.Honor);
-    findHealthBarEx(boxes,"sbar")->ResetAndMax(Champion.hero_stats.Stamina);
-    findHealthBarEx(boxes,"ebar")->ResetAndMax(Champion.hero_stats.Energy);
-    findHealthBarEx(boxes,"hbar")->EnableValueType(true,1);
-    findHealthBarEx(boxes,"sbar")->EnableValueType(true,1);
-    findHealthBarEx(boxes,"ebar")->EnableValueType(true,1);
+    std::cout << "==Registering Components==\n";
+
+    TLabelEX *gold_caption    = findLabelBox(boxes,"gold_cap");
+    THealthBarEx *honor_bar   = findHealthBarEx(boxes,"hbar");
+    THealthBarEx *stamina_bar = findHealthBarEx(boxes,"sbar");
+    THealthBarEx *energy_bar  = findHealthBarEx(boxes,"ebar");
+    THealthBarEx *xp_bar      = findHealthBarEx(boxes,"xbar");
+    THealthBarEx *hp_bar      = findHealthBarEx(boxes,"hpbar");
+    THealthBarEx *enemy_bar   = findHealthBarEx(boxes,"health_bar");
+    /// Stat Caption
+    TLabelEX *hd_stat_cap     = findLabelBox(boxes,"[HDR_CP]");
+    TLabelEX *ak_stat_cap     = findLabelBox(boxes,"[ATK_STAT_CP]");
+    TLabelEX *df_stat_cap     = findLabelBox(boxes,"[DEF_STAT_CP]");
+    TLabelEX *hl_stat_cap     = findLabelBox(boxes,"[HLT_STAT_CP]");
+    TLabelEX *en_stat_cap     = findLabelBox(boxes,"[ENG_STAT_CP]");
+    TLabelEX *st_stat_cap     = findLabelBox(boxes,"[STM_STAT_CP]");
+    TLabelEX *pr_stat_cap     = findLabelBox(boxes,"[PER_STAT_CP]");
+    /// Battle Buttons
+    TGraphic *bt_20_usage     = findGraphic(boxes,"[20_ATK]");
+    TGraphic *bt_05_usage     = findGraphic(boxes,"[5_ATK]");
+    TGraphic *bt_01_usage     = findGraphic(boxes,"[1_ATK]");
+    TGraphic *bt_auto_swp     = findGraphic(boxes,"auto_swap");
+    /// Stat Add Button Collection
+    TGraphic *ak_stat_add     = findGraphic(boxes,"[ATK_STAT_AD]");
+    TGraphic *df_stat_add     = findGraphic(boxes,"[DEF_STAT_AD]");
+    TGraphic *hl_stat_add     = findGraphic(boxes,"[HLT_STAT_AD]");
+    TGraphic *en_stat_add     = findGraphic(boxes,"[ENG_STAT_AD]");
+    TGraphic *st_stat_add     = findGraphic(boxes,"[STM_STAT_AD]");
+    TGraphic *pr_stat_add     = findGraphic(boxes,"[PER_STAT_AD]");
+    /// Stat Minus Button Collection
+    TGraphic *ak_stat_dec     = findGraphic(boxes,"[ATK_STAT_MN]");
+    TGraphic *df_stat_dec     = findGraphic(boxes,"[DEF_STAT_MN]");
+    TGraphic *hl_stat_dec     = findGraphic(boxes,"[HLT_STAT_MN]");
+    TGraphic *en_stat_dec     = findGraphic(boxes,"[ENG_STAT_MN]");
+    TGraphic *st_stat_dec     = findGraphic(boxes,"[STM_STAT_MN]");
+    TGraphic *pr_stat_dec     = findGraphic(boxes,"[PER_STAT_MN]");
+    /// Misc Buttons
+    TGraphic *stat_ext_bt     = findGraphic(boxes,"[STAT_EXIT_BTN]");
+    TGraphic *stat_ent_bt     = findGraphic(boxes,"[STAT_ENTER]");
+    TGraphic *stat_cnf_bt     = findGraphic(boxes,"[STAT_CONFIRM]");
+    TGraphic *raid_ent_bt     = findGraphic(boxes,"[RAID_ENTER]");
+    ///
+    TGraphic *raid_tgt_01     = findGraphic(boxes,"boss1");
+    TGraphic *raid_tgt_02     = findGraphic(boxes,"boss2");
+    TGraphic *raid_tgt_03     = findGraphic(boxes,"boss3");
+    TGraphic *raid_tgt_04     = findGraphic(boxes,"boss4");
+    ///
+    TGraphic *raid_swp_bt     = findGraphic(boxes,"slot_swap");
+    TGraphic *raid_rst_bt     = findGraphic(boxes,"restore1");
+    std::cout << "==Registered  Components==\n";
+    gold_caption->SetSize((size_t)(20*0.8));
+    gold_caption->Text = "0";
+    gold_caption->SetAlignment(GX_LB_ALIGN_LEFT);
+    honor_bar->ResetAndMax(Champion.hero_stats.Honor);
+    stamina_bar->ResetAndMax(Champion.hero_stats.Stamina);
+    energy_bar->ResetAndMax(Champion.hero_stats.Energy);
+    honor_bar->EnableValueType(true,1);
+    stamina_bar->EnableValueType(true,1);
+    energy_bar->EnableValueType(true,1);
 
     Champion.hero_stats.ToNextLevel = 4;
-    findHealthBarEx(boxes,"xbar")->ResetAndMax(Champion.hero_stats.ToNextLevel);
-    findHealthBarEx(boxes,"xbar")->EnableValueType(true,2);
-    findHealthBarEx(boxes,"hpbar")->ResetAndMax(Champion.hero_stats.Health);
-    findHealthBarEx(boxes,"hpbar")->EnableValueType(true,1);
+    xp_bar->ResetAndMax(Champion.hero_stats.ToNextLevel);
+    xp_bar->cur_value = Champion.hero_stats.Experience;
+    xp_bar->EnableValueType(true,2);
+    hp_bar->ResetAndMax(Champion.hero_stats.Health);
+    hp_bar->EnableValueType(true,1);
     Champion.hero_stats.AvailableStat = 100;
     double pendingStats = 0;
-    findLabelBox(boxes,"[HDR_CP]")->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
-    findLabelBox(boxes,"[ATK_STAT_CP]")->Text = "Attack "+std::to_string((long long int)Champion.hero_stats.Attack);
-    findLabelBox(boxes,"[DEF_STAT_CP]")->Text = "Defense "+std::to_string((long long int)Champion.hero_stats.Defense);
-    findLabelBox(boxes,"[HLT_STAT_CP]")->Text = "Health "+std::to_string((long long int)Champion.hero_stats.Health);
-    findLabelBox(boxes,"[ENG_STAT_CP]")->Text = "Energy "+std::to_string((long long int)Champion.hero_stats.Energy);
-    findLabelBox(boxes,"[STM_STAT_CP]")->Text = "Stamina "+std::to_string((long long int)Champion.hero_stats.Stamina);
-    findLabelBox(boxes,"[PER_STAT_CP]")->Text = "Perception "+std::to_string((long long int)Champion.hero_stats.Perception);
-    //std::function<void()> dx = Damage;
+    hd_stat_cap->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+    ak_stat_cap->Text = "Attack "+std::to_string((long long int)Champion.hero_stats.Attack);
+    df_stat_cap->Text = "Defense "+std::to_string((long long int)Champion.hero_stats.Defense);
+    hl_stat_cap->Text = "Health "+std::to_string((long long int)Champion.hero_stats.Health);
+    en_stat_cap->Text = "Energy "+std::to_string((long long int)Champion.hero_stats.Energy);
+    st_stat_cap->Text = "Stamina "+std::to_string((long long int)Champion.hero_stats.Stamina);
+    pr_stat_cap->Text = "Perception "+std::to_string((long long int)Champion.hero_stats.Perception);
+
+    auto UpdateStatLabel = [&hd_stat_cap,&ak_stat_cap,&df_stat_cap,&hl_stat_cap,&en_stat_cap,&st_stat_cap,&pr_stat_cap]()->void
+    {
+        hd_stat_cap->Text = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
+        ak_stat_cap->Text = "Attack "+std::to_string((long long int)Champion.hero_stats.Attack);
+        df_stat_cap->Text = "Defense "+std::to_string((long long int)Champion.hero_stats.Defense);
+        hl_stat_cap->Text = "Health "+std::to_string((long long int)Champion.hero_stats.Health);
+        en_stat_cap->Text = "Energy "+std::to_string((long long int)Champion.hero_stats.Energy);
+        st_stat_cap->Text = "Stamina "+std::to_string((long long int)Champion.hero_stats.Stamina);
+        pr_stat_cap->Text = "Perception "+std::to_string((long long int)Champion.hero_stats.Perception);
+
+    };
+
+
     std::cout <<  "Entering Render Loop" << std::endl;
     for(;;)
     {
-        if (done)
-            break;
-
-    //// Really should add error checking here.
+    if (done)
+        break;
     SDL_GL_MakeCurrent(hWindow,context);
-    //std::cout << rest << std::endl;
     glClearColor(0.0, 0.0, 0.0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
@@ -373,8 +432,6 @@ int RenderScene(void *data)
             for(auto &primative:_layers)
             {
                 if (!WorldEngine->LayerDisabled(primative->layer)){
-                /// Commenting Line Seems Redundant
-                /// glColor4f(1.0f,1.0f,1.0f,1.0f);
                     if (primative->GetType()==_pr_type_rect)
                     {
                         RectX *tmp = (RectX *)primative;
@@ -388,7 +445,6 @@ int RenderScene(void *data)
                         tmp->Draw();
                     }else if (primative->GetType()==_pr_type_health_bar)
                     {
-                        /// glColor3f(1,1,1);
                         THealthBar *tmp = (THealthBar *)primative;
                         tmp->Update(msx);
                         tmp->Draw();
@@ -454,25 +510,25 @@ int RenderScene(void *data)
         {
             if (enemy_health<phase_1)
             {
-                findGraphic(boxes,"boss1")->visible = false;
-                findGraphic(boxes,"boss2")->visible = false;
-                findGraphic(boxes,"boss3")->visible = false;
-                findGraphic(boxes,"boss4")->visible = true;
+                raid_tgt_01->visible = false;
+                raid_tgt_02->visible = false;
+                raid_tgt_03->visible = false;
+                raid_tgt_04->visible = true;
             }
-            findGraphic(boxes,"boss1")->visible = false;
-            findGraphic(boxes,"boss2")->visible = false;
-            findGraphic(boxes,"boss3")->visible = true;
+            raid_tgt_01->visible = false;
+            raid_tgt_02->visible = false;
+            raid_tgt_03->visible = true;
         }
-        findGraphic(boxes,"boss1")->visible = false;
-        findGraphic(boxes,"boss2")->visible = true;
+        raid_tgt_01->visible = false;
+        raid_tgt_02->visible = true;
 
     }else{
-        findGraphic(boxes,"boss1")->visible = true;
-        findGraphic(boxes,"boss2")->visible = false;
+        raid_tgt_01->visible = true;
+        raid_tgt_02->visible = false;
 
     }
     Update();
-    if (findGraphic(boxes,"slot_swap")->status)
+    if (raid_swp_bt->status)
     {
         usage_state+=1;
         if (usage_state>2)
@@ -481,19 +537,19 @@ int RenderScene(void *data)
         {
             case 0:
             {
-                findGraphic(boxes,"slot_swap")->caption ="Stamina";
+                raid_swp_bt->caption ="Stamina";
                 auto_state = 0;
                 break;
             }
             case 1:
             {
-                findGraphic(boxes,"slot_swap")->caption ="Energy";
+                raid_swp_bt->caption ="Energy";
                 auto_state = 1;
                 break;
             }
             case 2:
             {
-                findGraphic(boxes,"slot_swap")->caption ="Honor";
+                raid_swp_bt->caption ="Honor";
                 auto_state = 2;
                 break;
             }
@@ -503,13 +559,13 @@ int RenderScene(void *data)
 
 
     }
-    if (findGraphic(boxes,"restore1")->status)
+    if (raid_rst_bt->status)
     {
-        findHealthBarEx(boxes,"hbar")->cur_value = findHealthBarEx(boxes,"hbar")->max_value;
-        findHealthBarEx(boxes,"ebar")->cur_value = findHealthBarEx(boxes,"ebar")->max_value;
-        findHealthBarEx(boxes,"sbar")->cur_value = findHealthBarEx(boxes,"sbar")->max_value;
+        honor_bar->cur_value   = honor_bar->max_value;
+        energy_bar->cur_value  = energy_bar->max_value;
+        stamina_bar->cur_value = stamina_bar->max_value;
     }
-    if (findGraphic(boxes,"[20_ATK]")->status)
+    if (bt_20_usage->status)
     {
         if (auto_engage)
         {
@@ -536,7 +592,7 @@ int RenderScene(void *data)
         }
         }
     }
-    if (findGraphic(boxes,"[5_ATK]")->status)
+    if (bt_05_usage->status)
     {
         if (auto_engage)
         {
@@ -564,7 +620,7 @@ int RenderScene(void *data)
         }
         }
     }
-    if (findGraphic(boxes,"[1_ATK]")->status)
+    if (bt_01_usage->status)
     {
         if (auto_engage)
         {
@@ -593,7 +649,7 @@ int RenderScene(void *data)
         }
         }
     }
-    if (findGraphic(boxes,"auto_swap")->status)
+    if (bt_auto_swp->status)
     {
         auto_engage ^= true;
     }
@@ -632,11 +688,9 @@ int RenderScene(void *data)
             //std::cout<< "no target__\n";
     }
 
-
-    THealthBarEx *hbx = findHealthBarEx(boxes,"health_bar");
-    if (hbx!=nullptr)
+    if (enemy_bar!=nullptr)
     {
-        hbx->cur_value=enemy_health;
+        enemy_bar->cur_value=enemy_health;
     }
 
 
@@ -654,40 +708,28 @@ int RenderScene(void *data)
     }
 
 
-    /*
-     *
-     *
-     *
-     * BEGIN event handler for status stats update
-     *
-     *
-     *
-     *
-     */
 
+    STAT_BTN_PLUS_AND_MINUS(ak_stat_add,ak_stat_dec,ak_stat_cap,hd_stat_cap,"Attack",Champion.hero_stats.AvailableStat,Champion.hero_stats.Attack,Champion.hero_stats.AtkPending);
+    STAT_BTN_PLUS_AND_MINUS(df_stat_add,df_stat_dec,df_stat_cap,hd_stat_cap,"Defense",Champion.hero_stats.AvailableStat,Champion.hero_stats.Defense,Champion.hero_stats.AtkPending);
+    STAT_BTN_PLUS_AND_MINUS(hl_stat_add,hl_stat_dec,hl_stat_cap,hd_stat_cap,"Health",Champion.hero_stats.AvailableStat,Champion.hero_stats.Health,Champion.hero_stats.HltPending,5.0);
+    STAT_BTN_PLUS_AND_MINUS(en_stat_add,en_stat_dec,en_stat_cap,hd_stat_cap,"Energy",Champion.hero_stats.AvailableStat,Champion.hero_stats.Energy,Champion.hero_stats.EngPending);
+    STAT_BTN_PLUS_AND_MINUS(st_stat_add,st_stat_dec,st_stat_cap,hd_stat_cap,"Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina,Champion.hero_stats.StmPending,1.0,2.0);
+    STAT_BTN_PLUS_AND_MINUS(pr_stat_add,pr_stat_dec,pr_stat_cap,hd_stat_cap,"Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception,Champion.hero_stats.PerPending);
 
-    STAT_BTN_PLUS_AND_MINUS("[ATK_STAT_AD]","[ATK_STAT_MN]","[ATK_STAT_CP]","[HDR_CP]","Attack",Champion.hero_stats.AvailableStat,Champion.hero_stats.Attack);
-    STAT_BTN_PLUS_AND_MINUS("[DEF_STAT_AD]","[DEF_STAT_MN]","[DEF_STAT_CP]","[HDR_CP]","Defense",Champion.hero_stats.AvailableStat,Champion.hero_stats.Defense);
-    STAT_BTN_PLUS_AND_MINUS("[HLT_STAT_AD]","[HLT_STAT_MN]","[HLT_STAT_CP]","[HDR_CP]","Health",Champion.hero_stats.AvailableStat,Champion.hero_stats.Health);
-    STAT_BTN_PLUS_AND_MINUS("[ENG_STAT_AD]","[ENG_STAT_MN]","[ENG_STAT_CP]","[HDR_CP]","Energy",Champion.hero_stats.AvailableStat,Champion.hero_stats.Energy);
-    STAT_BTN_PLUS_AND_MINUS("[STM_STAT_AD]","[STM_STAT_MN]","[STM_STAT_CP]","[HDR_CP]","Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina);
-    STAT_BTN_PLUS_AND_MINUS("[PER_STAT_AD]","[PER_STAT_MN]","[PER_STAT_CP]","[HDR_CP]","Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception);
+    EXIT_BTN_STAT(stat_ext_bt);
+    ENTR_BTN_STAT(stat_ent_bt,hd_stat_cap);
+    EXIT_BTN_BATTLE(stat_ent_bt);
+    ENTR_BTN_BATTLE(raid_ent_bt,enemy_bar,raid_tgt_01,raid_tgt_02,raid_tgt_03,raid_tgt_04);
+    if (stat_cnf_bt->status)
+    {
+        Champion.hero_stats.ApplyPending();
+        UpdateStatLabel();
+        honor_bar->AdjValMax(Champion.hero_stats.Honor, Champion.hero_stats.HonorMax);
+        stamina_bar->AdjValMax(Champion.hero_stats.Stamina, Champion.hero_stats.StaminaMax);
+        energy_bar->AdjValMax(Champion.hero_stats.Energy, Champion.hero_stats.EnergyMax);
+        hp_bar->AdjValMax(Champion.hero_stats.Health, Champion.hero_stats.HealthMax);
+    }
 
-    EXIT_BTN_STAT("[STAT_EXIT_BTN]");
-    ENTR_BTN_STAT("[STAT_ENTER]");
-    EXIT_BTN_BATTLE("[EXIT_RAID]");
-    ENTR_BTN_BATTLE("[RAID_ENTER]");
-
-    /*
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     *
-     */
 
 
     if (keys!=nullptr){
@@ -774,7 +816,7 @@ int RenderScene(void *data)
     WorldEngine->FontManager.PopSize(1);
 
     std::string p_gold = std::to_string((long long int)Champion.hero_stats.Money);
-    findLabelBox(boxes,"gold_cap")->Text = gtx::format_str_hulk(p_gold);
+    gold_caption->Text = gtx::format_str_hulk(p_gold);
     //WorldEngine->FontManager.PrintText(window_w-200,20,1,p_gold.c_str());
 
 

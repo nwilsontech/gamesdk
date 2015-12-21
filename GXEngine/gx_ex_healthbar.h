@@ -17,6 +17,7 @@ public:
     virtual bool Inside();
     void SetMax(double M);
     void SetValue(double V);
+    void AdjValMax(double v, double m);
     void ResetAndMax(double M);
     void EnableValueType(bool show, int type);
     double Decrement(double dec);

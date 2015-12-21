@@ -77,19 +77,44 @@ public:
     void Init()
     {
         Health     = 100.0f;
+        HealthMax  = Health;
         Experience = 0.0f;
         ToNextLevel= 4.0f;
         Attack     = 1.0f;
         Defense    = 1.0f;
         Perception = 0.0f;
         Energy     = 30.0f;
+        EnergyMax  = Energy;
         Stamina    = 5.0f;
+        StaminaMax = Stamina;
         Honor      = 0.0f;
+        HonorMax   = Honor;
         PC         = 0.0f;
         Money      = 0.0f;
         Level      = 1.0f;
         Class      = 0;
         AvailableStat = 0.0f;
+        EmptyPending();
+    }
+
+    void EmptyPending(void)
+    {
+        HltPending = AtkPending = DefPending = EngPending = StmPending = HonPending = 0.0;
+    }
+    void ApplyPending(void)
+    {
+        Health     += HltPending;
+        HealthMax  += HltPending;
+        Attack     += AtkPending;
+        Defense    += DefPending;
+        Energy     += EngPending;
+        EnergyMax  += EngPending;
+        Stamina    += StmPending;
+        StaminaMax += StmPending;
+        Honor      += HonPending;
+        HonorMax   += HonPending;
+        EmptyPending();
+        //HltPending = AtkPending = DefPending = EngPending = StmPending = HonPending = 0.0;
     }
 
     void Print()
@@ -107,17 +132,28 @@ public:
     }
 
 public: //Variables
+    double HealthMax;
     double Health;
+    double HltPending;
     double Experience;
     double ToNextLevel;
     //---------------
     double Attack;
+    double AtkPending;
     double Defense;
+    double DefPending;
     double Perception;
+    double PerPending;
     //---------------
+    double EngPending;
     double Energy;
+    double EnergyMax;
+    double StmPending;
     double Stamina;
+    double StaminaMax;
+    double HonPending;
     double Honor;
+    double HonorMax;
     //---------------
     double PC;
     double Money;
