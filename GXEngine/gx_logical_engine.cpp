@@ -77,7 +77,8 @@ inline void EXIT_BTN_STAT(TGraphic *_btn)
            std::cout<<__PRETTY_FUNCTION__<<"\n";
            WorldEngine->elayers[WorldEngine->layer_bindings[STATS_MODE]] = true;
            WorldEngine->elayers[WorldEngine->layer_bindings[EQUIP_MODE]] = false;
-           Champion.hero_stats.EmptyPending();
+           Champion.hero_stats.RestoreAvStats();
+
            _btn->status = !_btn->status;
        }
 }
@@ -195,6 +196,7 @@ std::string get_usage_state(int us)
 }
 
 
+
 bool auto_engage = false;
 std::string auto_target = "";
 int auto_status = 0;
@@ -306,6 +308,7 @@ int RenderScene(void *data)
         SDL_Delay( 100 );
     }
 
+
     float hue = 250.0f;
     float sat = 1.0f;
     std::cout << "==Registering Components==\n";
@@ -349,6 +352,7 @@ int RenderScene(void *data)
     TGraphic *stat_ent_bt     = findGraphic(boxes,"[STAT_ENTER]");
     TGraphic *stat_cnf_bt     = findGraphic(boxes,"[STAT_CONFIRM]");
     TGraphic *raid_ent_bt     = findGraphic(boxes,"[RAID_ENTER]");
+    TGraphic *raid_ext_bt     = findGraphic(boxes,"[EXIT_RAID]");
     ///
     TGraphic *raid_tgt_01     = findGraphic(boxes,"boss1");
     TGraphic *raid_tgt_02     = findGraphic(boxes,"boss2");
@@ -375,7 +379,7 @@ int RenderScene(void *data)
     hp_bar->ResetAndMax(Champion.hero_stats.Health);
     hp_bar->EnableValueType(true,1);
     Champion.hero_stats.AvailableStat = 100;
-    double pendingStats = 0;
+    
     hd_stat_cap->Text      = "Remaining Stat Points: "+std::to_string((long long int)Champion.hero_stats.AvailableStat);
     ak_stat_cap->Text = "Attack "+std::to_string((long long int)Champion.hero_stats.Attack);
     df_stat_cap->Text = "Defense "+std::to_string((long long int)Champion.hero_stats.Defense);
@@ -716,9 +720,15 @@ int RenderScene(void *data)
     STAT_BTN_PLUS_AND_MINUS(st_stat_add,st_stat_dec,st_stat_cap,hd_stat_cap,"Stamina",Champion.hero_stats.AvailableStat,Champion.hero_stats.Stamina,Champion.hero_stats.StmPending,1.0,2.0);
     STAT_BTN_PLUS_AND_MINUS(pr_stat_add,pr_stat_dec,pr_stat_cap,hd_stat_cap,"Perception",Champion.hero_stats.AvailableStat,Champion.hero_stats.Perception,Champion.hero_stats.PerPending);
 
+
     EXIT_BTN_STAT(stat_ext_bt);
+    if (stat_ent_bt->status)
+    {
+        UpdateStatLabel();
+    }
     ENTR_BTN_STAT(stat_ent_bt,hd_stat_cap);
-    EXIT_BTN_BATTLE(stat_ent_bt);
+
+    EXIT_BTN_BATTLE(raid_ext_bt);
     ENTR_BTN_BATTLE(raid_ent_bt,enemy_bar,raid_tgt_01,raid_tgt_02,raid_tgt_03,raid_tgt_04);
     if (stat_cnf_bt->status)
     {
@@ -730,6 +740,7 @@ int RenderScene(void *data)
         hp_bar->AdjValMax(Champion.hero_stats.Health, Champion.hero_stats.HealthMax);
     }
 
+    WorldEngine->Menu.Draw();
 
 
     if (keys!=nullptr){
@@ -764,8 +775,8 @@ int RenderScene(void *data)
 
     if (keys[SDL_SCANCODE_1]&&!KYS[SDL_SCANCODE_1])
     {
-        WorldEngine->ToggleLayer(1);
-        cout<<"\t"<<WorldEngine->elayers.at(1)<<endl;
+        WorldEngine->Menu.visible = true;
+
         //findGraphic(boxes,"[20_ATK]")->color=ColorHSV(hue,1,1);
         KYS[SDL_SCANCODE_1] = true;
     }else if (!keys[SDL_SCANCODE_1]&&KYS[SDL_SCANCODE_1])

@@ -97,9 +97,26 @@ public:
         EmptyPending();
     }
 
+    double CalculateCostOfAttDefPer(void)
+    {
+        return 0;
+    }
+
+    void RestoreAvStats(void)
+    {
+        AvailableStat+=HltPending/5.0;
+        AvailableStat+=AtkPending;
+        AvailableStat+=DefPending;
+        AvailableStat+=EngPending;
+        AvailableStat+=StmPending;
+        AvailableStat+=HonPending;
+        AvailableStat+=PerPending;
+        EmptyPending();
+    }
+
     void EmptyPending(void)
     {
-        HltPending = AtkPending = DefPending = EngPending = StmPending = HonPending = 0.0;
+        HltPending = AtkPending = DefPending = EngPending = StmPending = HonPending = PerPending = 0.0;
     }
     void ApplyPending(void)
     {
@@ -113,6 +130,7 @@ public:
         StaminaMax += StmPending;
         Honor      += HonPending;
         HonorMax   += HonPending;
+        Perception += PerPending;
         EmptyPending();
         //HltPending = AtkPending = DefPending = EngPending = StmPending = HonPending = 0.0;
     }

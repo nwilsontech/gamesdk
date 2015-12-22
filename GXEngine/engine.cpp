@@ -46,6 +46,13 @@ void GX_Engine::Init()
     };
     md = NAVIG_MODE;
     FontManager.Init();
+
+    Menu.menuBack = new TGraphic("bars/menu_back.png");
+    Menu.itmBack  = new TGraphic("bars/item_blk2.png");
+    Menu.itmBack->SetSize(Menu.menuBack->w-40,200);
+    Menu.AddItem(TGX_menu_item("test","attrib1","attrib2"));
+    Menu.AddItem(TGX_menu_item("test","attrib1","attrib2"));
+    Menu.AddItem(TGX_menu_item("test","attrib1","attrib2"));
     //Print =std::bind(&FontManager.PrintText,_1,_2,_3,_4,_5);
 }
 
@@ -81,4 +88,12 @@ void GX_Engine::SetMode(GX_ENGINE_MODE mode)
 GX_ENGINE_MODE GX_Engine::GetMode()
 {
     return md;
+}
+
+void GX_Engine::InitMenuGraphics()
+{
+    TGraphic *menu_back_item = new TGraphic("bars/menu_back.png",0,0);
+    menu_back_item->visible = false;
+    menu_back_item->SetClickable(0);
+    
 }
