@@ -64,6 +64,7 @@ public: //temp moved to public for testing 2.20.15
     float _index;
     float theata;
     TFloat color;
+    TFloat cap_color;
 public:
     GXTexture *tex;
 

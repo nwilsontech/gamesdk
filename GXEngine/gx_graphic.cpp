@@ -49,6 +49,7 @@ TGraphic::TGraphic(string fn, float xx, float yy):TPrimative()
     status   = false;
     color    = GetColor("white");
     caption  = "";
+    cap_color = color;
     ///** AWESOME **///
 
 //    VertexShader vertToon ("circ.vert");
@@ -143,7 +144,9 @@ void TGraphic::Draw(void)
     if(caption!="")
     {
         //std::cout<< "rendering caption:" << caption << " \n";
+        glColor3fv(cap_color);
         WorldEngine->FontManager.PrintTextCenter(x+w/2,y+h*0.6,1,caption.c_str());
+        glColor3f(1.0,1.0,1.0);
     }
 }
 

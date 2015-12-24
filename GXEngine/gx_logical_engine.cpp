@@ -292,7 +292,7 @@ int RenderScene(void *data)
                 findHealthBarEx(boxes,"sbar")->ResetAndMax(Champion.hero_stats.Stamina);
                 findHealthBarEx(boxes,"ebar")->ResetAndMax(Champion.hero_stats.Energy);
                 findHealthBarEx(boxes,"hbar")->ResetAndMax(Champion.hero_stats.Honor);
-                Champion.hero_stats.AvailableStat += 7;
+                Champion.hero_stats.AvailableStat += 100;
 
             }
             findHealthBarEx(boxes,"xbar")->SetValue(Champion.hero_stats.Experience);
@@ -312,6 +312,7 @@ int RenderScene(void *data)
     float hue = 250.0f;
     float sat = 1.0f;
     std::cout << "==Registering Components==\n";
+//#define EXEC_PRINT(s) std::cout<<#s<<std::endl; s
 
     TLabelEX *gold_caption    = findLabelBox(boxes,"gold_cap");
     THealthBarEx *honor_bar   = findHealthBarEx(boxes,"hbar");
@@ -436,60 +437,9 @@ int RenderScene(void *data)
             for(auto &primative:_layers)
             {
                 if (!WorldEngine->LayerDisabled(primative->layer)){
-                    if (primative->GetType()==_pr_type_rect)
-                    {
-                        RectX *tmp = (RectX *)primative;
-                        tmp->Update(msx);
-                        tmp->Draw();
-
-                    }else if (primative->GetType()==_pr_type_rect_adv)
-                    {
-                        RectXAdv *tmp = (RectXAdv *)primative;
-                        tmp->Update(msx);
-                        tmp->Draw();
-                    }else if (primative->GetType()==_pr_type_health_bar)
-                    {
-                        THealthBar *tmp = (THealthBar *)primative;
-                        tmp->Update(msx);
-                        tmp->Draw();
-
-                    }else if (primative->GetType()==_pr_type_health_bar_ex)
-                    {
-                        THealthBarEx *tmp = (THealthBarEx *)primative;
-                        tmp->Update(msx);
-                        tmp->Draw();
-
-                    }
-                    else if(primative->GetType()==_pr_type_caption)
-                    {
-                        GXCaption *tcap = (GXCaption *)primative;
-                        tcap->Update(msx);
-                        tcap->Draw();
-                    }
-                    else if(primative->GetType()==_pr_type_lb_box)
-                    {
-                        GXLabelBox *tcap = (GXLabelBox *)primative;
-                        tcap->Update(msx);
-                        tcap->Draw();
-                    }
-                    else if(primative->GetType()==_pr_type_graphic)
-                    {
-                        TGraphic *tcap = (TGraphic *)primative;
-                        tcap->Update(msx);
-                        tcap->Draw();
-                    }
-                    else if(primative->GetType()==_pr_type_group)
-                    {
-                        TGroup *tcap = (TGroup *)primative;
-                        tcap->Update(msx);
-                        tcap->Draw();
-                    }
-                    else if(primative->GetType()==_pr_type_menu)
-                    {
-                        gx_menu *tcap = (gx_menu *)primative;
-                        tcap->Update(msx);
-                        tcap->Draw();
-                    }
+                    if (WorldEngine->GetMode()!=NAVIG_MODE)
+                        primative->Update(msx);
+                    primative->Draw();
                 }
             }
         }
@@ -504,6 +454,10 @@ int RenderScene(void *data)
         fprintf(stdout,"no render content\n");
     }
 
+    if (WorldEngine->GetMode()==NAVIG_MODE)
+        {
+            WorldEngine->Menu.Update(msx);
+        }
 
 
     if (!WorldEngine->elayers[WorldEngine->layer_bindings[BATTL_MODE]]) {
@@ -775,8 +729,11 @@ int RenderScene(void *data)
 
     if (keys[SDL_SCANCODE_1]&&!KYS[SDL_SCANCODE_1])
     {
-        WorldEngine->Menu.visible = true;
-
+        WorldEngine->Menu.visible = !WorldEngine->Menu.visible;
+        if (WorldEngine->Menu.visible==true)
+            WorldEngine->SetMode(NAVIG_MODE);
+        else
+            WorldEngine->SetMode(EQUIP_MODE);
         //findGraphic(boxes,"[20_ATK]")->color=ColorHSV(hue,1,1);
         KYS[SDL_SCANCODE_1] = true;
     }else if (!keys[SDL_SCANCODE_1]&&KYS[SDL_SCANCODE_1])

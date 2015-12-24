@@ -19,6 +19,10 @@ public:
         text = t;
         attrib1 = at1;
         attrib2 = at2;
+        itm_image = nullptr;
+        bt1_image = nullptr;
+        bt2_image = nullptr;
+        stack = 1;
     }
    ~TGX_menu_item(){}
 public:
@@ -26,6 +30,9 @@ public:
     std::string attrib1;
     std::string attrib2;
     TGraphic *itm_image;
+    TGraphic *bt1_image;
+    TGraphic *bt2_image;
+    size_t stack;
 
 };
 
@@ -36,6 +43,7 @@ public:
         menuBack = nullptr;
         itmBack  = nullptr;
         visible  = false;
+        lastX = lastY = 0;
     }
     ~TGX_menu(){}
 public:
@@ -46,50 +54,22 @@ public:
     void SetVisible(bool ShowNo){
         visible  = ShowNo;
     }
+    void Update(MouseState ms);
+
 
 public:
-    void Draw()
-    {
-        if (visible==false)
-            return;
+    void Draw();
 
-        if (menuBack==nullptr)
-        {
-            std::cerr<<"Menu Background Not Initialized"<<std::endl;
-            return;
-        }
-
-        if (itmBack==nullptr)
-        {
-            std::cerr<<"Item Background Not Initialized"<<std::endl;
-            return;
-        }
-
-        menuBack->x = 0.0;
-        menuBack->y = 67.0;
-
-        menuBack->Draw();
-
-        for (size_t idx = 0; idx < items.size(); idx++)
-        {
-            itmBack->x = 20;
-            itmBack->y = menuBack-> y + 90 + idx*itmBack->h+3*idx;
-            itmBack->Draw();
-        }
-//        for (size_t idx = 0; idx < items.size(); i++)
-//        {
-//            items.at(idx).itm_image->x = 0;
-//            items.at(idx).itm_image->y = 0 + idx*45;
-//            items.at(idx).itm_image->Draw();
-//        }
-    }
 
 public:
     std::vector<TGX_menu_item> items;
 public:
+    int lastX,lastY;
     TGraphic *menuBack;
     TGraphic *itmBack;
+
     bool      visible;
+    int yOffset;
 
 };
 
